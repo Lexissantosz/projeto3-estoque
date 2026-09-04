@@ -13,7 +13,9 @@ export default function Dashboard() {
   // BUG: usa um limite fixo de 10 unidades pra destacar "estoque baixo" no
   // dashboard, ignorando o campo estoqueMinimo de cada produto (que pode ser
   // diferente para cada um).
-  const estoqueBaixo = produtos.filter((p) => p.quantidadeEstoque < 10)
+  const estoqueBaixo = produtos.filter(
+  (p) => p.quantidadeEstoque < p.estoqueMinimo
+)
 
   return (
     <div>
