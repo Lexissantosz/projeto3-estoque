@@ -59,7 +59,7 @@ export default function FormProduto() {
           <select name="categoriaId" value={form.categoriaId} onChange={handleChange}>
             <option value="">Selecione...</option>
             {categorias.map((c) => (
-              <option key={c.id} value={c.nome}>{c.nome}</option>
+              <option key={c.id} value={c.id}>{c.nome}</option>
             ))}
           </select>
         </div>
