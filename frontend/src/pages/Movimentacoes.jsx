@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { get, post } from '../services/api'
 
 export default function Movimentacoes() {
@@ -6,6 +6,7 @@ export default function Movimentacoes() {
   const [produtos, setProdutos] = useState([])
   const [form, setForm] = useState({ produtoId: '', tipo: 'SAIDA', quantidade: 1, observacao: '' })
   const [enviando, setEnviando] = useState(false)
+  const enviandoRef = useRef(false)
 
   useEffect(() => {
     carregar()
@@ -16,15 +17,32 @@ export default function Movimentacoes() {
     get('/movimentacoes').then(setMovimentacoes)
   }
 
-  function handleSubmit(e) {
-    e.preventDefault()
-    // BUG: nao desabilita o botao durante o envio nem impede duplo-clique,
-    // entao cliques rapidos podem registrar a mesma movimentacao 2x
-    post('/movimentacoes', form).then(() => {
-      carregar()
-      get('/produtos').then(setProdutos)
-    })
+  async function handleSubmit(e) {
+  e.preventDefault()
+
+  if (enviandoRef.current) return
+
+  enviandoRef.current = true
+  setEnviando(true)
+
+  try {
+    await post('/movimentacoes', form)
+
+    const [novasMovimentacoes, novosProdutos] = await Promise.all([
+      get('/movimentacoes'),
+      get('/produtos')
+    ])
+
+    setMovimentacoes(novasMovimentacoes)
+    setProdutos(novosProdutos)
+
+    // pequeno bloqueio para evitar duplo clique acidental
+    await new Promise(resolve => setTimeout(resolve, 700))
+  } finally {
+    enviandoRef.current = false
+    setEnviando(false)
   }
+}
 
   return (
     <div>
@@ -54,7 +72,9 @@ export default function Movimentacoes() {
           <label>Observacao</label>
           <input value={form.observacao} onChange={(e) => setForm({ ...form, observacao: e.target.value })} />
         </div>
-        <button type="submit">Registrar</button>
+        <button type="submit" disabled={enviando}>
+          {enviando ? 'Registrando...' : 'Registrar'}
+        </button>
       </form>
 
       <table>
