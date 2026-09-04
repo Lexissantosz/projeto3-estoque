@@ -30,8 +30,10 @@ public class MovimentacaoService {
         Produto produto = produtoRepository.findById(mov.getProdutoId()).orElseThrow();
 
         if (mov.getTipo() == TipoMovimentacao.SAIDA) {
-            // BUG: nao verifica se ha quantidade suficiente em estoque antes de
-            // dar saida, entao o estoque pode ficar negativo.
+            if (mov.getQuantidade() > produto.getQuantidadeEstoque()) {
+                throw new IllegalArgumentException("Quantidade de saída maior que o estoque disponível.");
+            }
+
             produto.setQuantidadeEstoque(produto.getQuantidadeEstoque() - mov.getQuantidade());
             produtoRepository.save(produto);
         }
