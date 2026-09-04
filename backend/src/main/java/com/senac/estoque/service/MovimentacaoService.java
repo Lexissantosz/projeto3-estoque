@@ -39,6 +39,11 @@ public class MovimentacaoService {
         // salva a movimentacao no historico, mas NUNCA soma a quantidade de volta
         // no estoque do produto.
 
+        else if (mov.getTipo() == TipoMovimentacao.ENTRADA) {
+            produto.setQuantidadeEstoque(produto.getQuantidadeEstoque() + mov.getQuantidade());
+            produtoRepository.save(produto);
+        }
+
         return movimentacaoRepository.save(mov);
     }
 }
