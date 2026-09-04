@@ -22,14 +22,19 @@ export default function FormProduto() {
   }
 
   function handleSubmit(e) {
-    e.preventDefault()
-    // BUG: nao valida preco negativo antes de enviar pro backend
-    if (id) {
-      put(`/produtos/${id}`, form).then(() => navigate('/produtos'))
-    } else {
-      post('/produtos', form).then(() => navigate('/produtos'))
-    }
+  e.preventDefault()
+
+  if (Number(form.precoUnitario) < 0) {
+    alert('O preço não pode ser negativo.')
+    return
   }
+
+  if (id) {
+    put(`/produtos/${id}`, form).then(() => navigate('/produtos'))
+  } else {
+    post('/produtos', form).then(() => navigate('/produtos'))
+  }
+}
 
   return (
     <div>
@@ -45,7 +50,14 @@ export default function FormProduto() {
         </div>
         <div className="field">
           <label>Preco unitario</label>
-          <input type="number" step="0.01" name="precoUnitario" value={form.precoUnitario} onChange={handleChange} />
+          <input
+            type="number"
+            step="0.01"
+            min="0"
+            name="precoUnitario"
+            value={form.precoUnitario}
+            onChange={handleChange}
+          />
         </div>
         <div className="field">
           <label>Estoque minimo</label>
