@@ -10,12 +10,14 @@ export default function Dashboard() {
     get('/produtos/valor-total').then((r) => setValorTotal(r.valorTotal))
   }, [])
 
-  // BUG: usa um limite fixo de 10 unidades pra destacar "estoque baixo" no
-  // dashboard, ignorando o campo estoqueMinimo de cada produto (que pode ser
-  // diferente para cada um).
   const estoqueBaixo = produtos.filter(
-  (p) => p.quantidadeEstoque < p.estoqueMinimo
-)
+    (p) => p.quantidadeEstoque < p.estoqueMinimo
+  )
+
+  const valorTotalFormatado = Number(valorTotal || 0).toLocaleString('pt-BR', {
+    style: 'currency',
+    currency: 'BRL',
+  })
 
   return (
     <div>
@@ -27,9 +29,7 @@ export default function Dashboard() {
         </div>
         <div className="card">
           <div>Valor total em estoque</div>
-          {/* BUG: concatenacao manual de string em vez de toLocaleString,
-              mostra por exemplo "R$ 199.9" em vez de "R$ 199,90" */}
-          <div className="stat">R$ {valorTotal}</div>
+          <div className="stat">{valorTotalFormatado}</div>
         </div>
         <div className="card">
           <div>Produtos com estoque baixo</div>
