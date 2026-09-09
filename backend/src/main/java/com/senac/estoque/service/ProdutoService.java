@@ -4,6 +4,7 @@ import com.senac.estoque.model.Produto;
 import com.senac.estoque.repository.ProdutoRepository;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Service
@@ -44,11 +45,17 @@ public class ProdutoService {
         produtoRepository.deleteById(id);
     }
 
-    public double calcularValorTotalEmEstoque() {
-        double total = 0;
+    public BigDecimal calcularValorTotalEmEstoque() {
+        BigDecimal total = BigDecimal.ZERO;
+
         for (Produto p : produtoRepository.findAll()) {
-            total += p.getPrecoUnitario() * p.getQuantidadeEstoque();
+            if (p.getPrecoUnitario() != null && p.getQuantidadeEstoque() != null) {
+                BigDecimal preco = BigDecimal.valueOf(p.getPrecoUnitario());
+                BigDecimal quantidade = BigDecimal.valueOf(p.getQuantidadeEstoque());
+                total = total.add(preco.multiply(quantidade));
+            }
         }
+
         return total;
     }
 
