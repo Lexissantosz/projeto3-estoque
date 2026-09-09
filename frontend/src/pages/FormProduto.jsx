@@ -21,20 +21,28 @@ export default function FormProduto() {
     setForm({ ...form, [e.target.name]: e.target.value })
   }
 
-  function handleSubmit(e) {
-  e.preventDefault()
+  async function handleSubmit(e) {
+    e.preventDefault()
 
-  if (Number(form.precoUnitario) < 0) {
-    alert('O preço não pode ser negativo.')
-    return
-  }
+    if (Number(form.precoUnitario) < 0) {
+      alert('O preço não pode ser negativo.')
+      return
+    }
 
-  if (id) {
-    put(`/produtos/${id}`, form).then(() => navigate('/produtos'))
-  } else {
-    post('/produtos', form).then(() => navigate('/produtos'))
+    try {
+      if (id) {
+        await put(`/produtos/${id}`, form)
+        alert('Produto atualizado com sucesso.')
+      } else {
+        await post('/produtos', form)
+        alert('Produto cadastrado com sucesso.')
+      }
+
+      navigate('/produtos')
+    } catch {
+      alert('Não foi possível salvar o produto.')
+    }
   }
-}
 
   return (
     <div>
@@ -65,9 +73,6 @@ export default function FormProduto() {
         </div>
         <div className="field">
           <label>Categoria</label>
-          {/* BUG: o value do option usa o NOME da categoria em vez do ID,
-              entao categoriaId acaba sendo salvo com um texto (o nome),
-              e nao com o id numerico que o backend espera. */}
           <select name="categoriaId" value={form.categoriaId} onChange={handleChange}>
             <option value="">Selecione...</option>
             {categorias.map((c) => (
