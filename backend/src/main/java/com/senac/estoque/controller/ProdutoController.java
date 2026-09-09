@@ -4,6 +4,7 @@ import com.senac.estoque.model.Produto;
 import com.senac.estoque.service.ProdutoService;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
@@ -34,7 +35,7 @@ public class ProdutoController {
     }
 
     @GetMapping("/valor-total")
-    public Map<String, Double> valorTotal() {
+    public Map<String, BigDecimal> valorTotal() {
         return Map.of("valorTotal", produtoService.calcularValorTotalEmEstoque());
     }
 
