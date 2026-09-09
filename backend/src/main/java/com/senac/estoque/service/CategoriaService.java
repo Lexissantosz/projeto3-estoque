@@ -2,6 +2,7 @@ package com.senac.estoque.service;
 
 import com.senac.estoque.model.Categoria;
 import com.senac.estoque.repository.CategoriaRepository;
+import com.senac.estoque.repository.ProdutoRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -10,9 +11,11 @@ import java.util.List;
 public class CategoriaService {
 
     private final CategoriaRepository categoriaRepository;
+    private final ProdutoRepository produtoRepository;
 
-    public CategoriaService(CategoriaRepository categoriaRepository) {
+    public CategoriaService(CategoriaRepository categoriaRepository, ProdutoRepository produtoRepository) {
         this.categoriaRepository = categoriaRepository;
+        this.produtoRepository = produtoRepository;
     }
 
     public List<Categoria> listarTodas() {
@@ -24,8 +27,13 @@ public class CategoriaService {
     }
 
     public void excluir(Long id) {
-        // BUG: nao verifica se existem produtos usando essa categoria antes de excluir.
-        // Produtos ficam com categoriaId apontando pra uma categoria que nao existe mais.
+        boolean possuiProdutosVinculados = produtoRepository.findAll().stream()
+                .anyMatch(produto -> id.equals(produto.getCategoriaId()));
+
+        if (possuiProdutosVinculados) {
+            throw new IllegalStateException("Nao e possivel excluir uma categoria com produtos vinculados.");
+        }
+
         categoriaRepository.deleteById(id);
     }
 }
