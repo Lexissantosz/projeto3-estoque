@@ -12,7 +12,7 @@ export default function Produtos() {
   }, [])
 
   function carregar() {
-    get('/produtos').then(setProdutos)
+    return get('/produtos').then(setProdutos)
   }
 
   function nomeCategoria(categoriaId) {
@@ -27,9 +27,15 @@ export default function Produtos() {
     })
   }
 
-  function excluir(id) {
-    if (window.confirm('Deseja realmente excluir este produto?')) {
-      del(`/produtos/${id}`).then(carregar)
+  async function excluir(id) {
+    if (!window.confirm('Deseja realmente excluir este produto?')) return
+
+    try {
+      await del(`/produtos/${id}`)
+      await carregar()
+      alert('Produto excluído com sucesso.')
+    } catch {
+      alert('Não foi possível excluir o produto.')
     }
   }
 
