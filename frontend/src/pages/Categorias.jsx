@@ -10,21 +10,30 @@ export default function Categorias() {
   }, [])
 
   function carregar() {
-    get('/categorias').then(setCategorias)
+    return get('/categorias').then(setCategorias)
   }
 
-  function criar(e) {
+  async function criar(e) {
     e.preventDefault()
-    post('/categorias', { nome }).then(() => {
+
+    try {
+      await post('/categorias', { nome })
       setNome('')
-      carregar()
-    })
+      await carregar()
+      alert('Categoria adicionada com sucesso.')
+    } catch {
+      alert('Não foi possível adicionar a categoria.')
+    }
   }
 
-  function excluir(id) {
-    // BUG: nenhum aviso de que produtos vinculados a essa categoria vao ficar
-    // com uma referencia quebrada
-    del(`/categorias/${id}`).then(carregar)
+  async function excluir(id) {
+    try {
+      await del(`/categorias/${id}`)
+      await carregar()
+      alert('Categoria excluída com sucesso.')
+    } catch {
+      alert('Não foi possível excluir a categoria. Verifique se existem produtos vinculados a ela.')
+    }
   }
 
   return (
