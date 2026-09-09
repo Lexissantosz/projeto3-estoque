@@ -20,6 +20,13 @@ export default function Produtos() {
     return cat ? cat.nome : '(sem categoria)'
   }
 
+  function formatarPreco(valor) {
+    return Number(valor || 0).toLocaleString('pt-BR', {
+      style: 'currency',
+      currency: 'BRL',
+    })
+  }
+
   function excluir(id) {
     if (window.confirm('Deseja realmente excluir este produto?')) {
       del(`/produtos/${id}`).then(carregar)
@@ -39,8 +46,7 @@ export default function Produtos() {
             <tr key={p.id} className={p.quantidadeEstoque < p.estoqueMinimo ? 'low-stock' : ''}>
               <td>{p.nome}</td>
               <td>{nomeCategoria(p.categoriaId)}</td>
-              {/* BUG: concatenacao manual em vez de formatacao de moeda */}
-              <td>R$ {p.precoUnitario}</td>
+              <td>{formatarPreco(p.precoUnitario)}</td>
               <td>{p.quantidadeEstoque}</td>
               <td>
                 <Link to={`/produtos/${p.id}/editar`}>Editar</Link>{' '}
