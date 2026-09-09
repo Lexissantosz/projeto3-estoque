@@ -18,31 +18,34 @@ export default function Movimentacoes() {
   }
 
   async function handleSubmit(e) {
-  e.preventDefault()
+    e.preventDefault()
 
-  if (enviandoRef.current) return
+    if (enviandoRef.current) return
 
-  enviandoRef.current = true
-  setEnviando(true)
+    enviandoRef.current = true
+    setEnviando(true)
 
-  try {
-    await post('/movimentacoes', form)
+    try {
+      await post('/movimentacoes', form)
 
-    const [novasMovimentacoes, novosProdutos] = await Promise.all([
-      get('/movimentacoes'),
-      get('/produtos')
-    ])
+      const [novasMovimentacoes, novosProdutos] = await Promise.all([
+        get('/movimentacoes'),
+        get('/produtos')
+      ])
 
-    setMovimentacoes(novasMovimentacoes)
-    setProdutos(novosProdutos)
+      setMovimentacoes(novasMovimentacoes)
+      setProdutos(novosProdutos)
 
-    // pequeno bloqueio para evitar duplo clique acidental
-    await new Promise(resolve => setTimeout(resolve, 700))
-  } finally {
-    enviandoRef.current = false
-    setEnviando(false)
+      await new Promise(resolve => setTimeout(resolve, 700))
+    } finally {
+      enviandoRef.current = false
+      setEnviando(false)
+    }
   }
-}
+
+  function formatarData(data) {
+    return new Date(data).toLocaleString('pt-BR')
+  }
 
   return (
     <div>
@@ -80,15 +83,12 @@ export default function Movimentacoes() {
       <table>
         <thead><tr><th>Produto</th><th>Tipo</th><th>Quantidade</th><th>Data</th><th>Observacao</th></tr></thead>
         <tbody>
-          {/* BUG: nao trata o caso da lista vir vazia/null do backend antes de
-              carregar; se a API retornar null (em vez de []) isso quebra. */}
           {movimentacoes.map((m) => (
             <tr key={m.id}>
               <td>{m.produtoId}</td>
               <td>{m.tipo}</td>
               <td>{m.quantidade}</td>
-              {/* BUG: exibe a data crua do JS sem formatar em pt-BR */}
-              <td>{new Date(m.data).toString()}</td>
+              <td>{formatarData(m.data)}</td>
               <td>{m.observacao}</td>
             </tr>
           ))}
