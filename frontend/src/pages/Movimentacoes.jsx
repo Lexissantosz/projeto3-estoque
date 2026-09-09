@@ -49,6 +49,11 @@ export default function Movimentacoes() {
     return new Date(data).toLocaleString('pt-BR')
   }
 
+  function nomeProduto(produtoId) {
+    const produto = produtos.find((p) => p.id === Number(produtoId))
+    return produto ? produto.nome : `Produto #${produtoId}`
+  }
+
   return (
     <div>
       <h1>Movimentacoes de Estoque</h1>
@@ -87,7 +92,7 @@ export default function Movimentacoes() {
         <tbody>
           {movimentacoes.map((m) => (
             <tr key={m.id}>
-              <td>{m.produtoId}</td>
+              <td>{nomeProduto(m.produtoId)}</td>
               <td>{m.tipo}</td>
               <td>{m.quantidade}</td>
               <td>{formatarData(m.data)}</td>
