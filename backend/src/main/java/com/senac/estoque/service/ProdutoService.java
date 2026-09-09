@@ -45,8 +45,6 @@ public class ProdutoService {
     }
 
     public double calcularValorTotalEmEstoque() {
-        // BUG: soma usando "float"/double para dinheiro em vez de BigDecimal,
-        // o que pode gerar erros de arredondamento em relatorios financeiros.
         double total = 0;
         for (Produto p : produtoRepository.findAll()) {
             total += p.getPrecoUnitario() * p.getQuantidadeEstoque();
@@ -55,10 +53,8 @@ public class ProdutoService {
     }
 
     public List<Produto> listarComEstoqueBaixo() {
-        // BUG: usa "<" em vez de "<=". Um produto com quantidadeEstoque exatamente
-        // igual ao estoqueMinimo nao aparece no alerta, mesmo estando no limite.
         return produtoRepository.findAll().stream()
-                .filter(p -> p.getQuantidadeEstoque() < p.getEstoqueMinimo())
+                .filter(p -> p.getQuantidadeEstoque() <= p.getEstoqueMinimo())
                 .toList();
     }
 }
