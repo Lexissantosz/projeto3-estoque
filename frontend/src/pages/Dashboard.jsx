@@ -11,7 +11,7 @@ export default function Dashboard() {
   }, [])
 
   const estoqueBaixo = produtos.filter(
-    (p) => p.quantidadeEstoque < p.estoqueMinimo
+    (p) => p.quantidadeEstoque <= p.estoqueMinimo
   )
 
   const valorTotalFormatado = Number(valorTotal || 0).toLocaleString('pt-BR', {
