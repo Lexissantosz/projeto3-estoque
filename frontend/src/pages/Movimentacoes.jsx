@@ -14,7 +14,7 @@ export default function Movimentacoes() {
   }, [])
 
   function carregar() {
-    get('/movimentacoes').then((dados) => {
+    return get('/movimentacoes').then((dados) => {
       setMovimentacoes(Array.isArray(dados) ? dados : [])
     })
   }
@@ -37,8 +37,11 @@ export default function Movimentacoes() {
 
       setMovimentacoes(Array.isArray(novasMovimentacoes) ? novasMovimentacoes : [])
       setProdutos(novosProdutos)
+      alert('Movimentação registrada com sucesso.')
 
       await new Promise(resolve => setTimeout(resolve, 700))
+    } catch {
+      alert('Não foi possível registrar a movimentação. Verifique os dados e o estoque disponível.')
     } finally {
       enviandoRef.current = false
       setEnviando(false)
