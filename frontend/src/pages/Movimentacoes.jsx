@@ -14,7 +14,9 @@ export default function Movimentacoes() {
   }, [])
 
   function carregar() {
-    get('/movimentacoes').then(setMovimentacoes)
+    get('/movimentacoes').then((dados) => {
+      setMovimentacoes(Array.isArray(dados) ? dados : [])
+    })
   }
 
   async function handleSubmit(e) {
@@ -33,7 +35,7 @@ export default function Movimentacoes() {
         get('/produtos')
       ])
 
-      setMovimentacoes(novasMovimentacoes)
+      setMovimentacoes(Array.isArray(novasMovimentacoes) ? novasMovimentacoes : [])
       setProdutos(novosProdutos)
 
       await new Promise(resolve => setTimeout(resolve, 700))
